@@ -1,31 +1,140 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 
 <head>
+	<meta charset="UTF-8" />
 	<meta name="viewport" content="width=device-width, initial-scale=1" />
-	<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script> <!-- Using A-frame version 1.5.0 -->
+	<title>MindAR Hologram Card</title>
+
+	<script src="https://aframe.io/releases/1.5.0/aframe.min.js"></script>
 	<script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-aframe.prod.js"></script>
+	<script src="https://unpkg.com/aframe-hologram-shader"></script>
+
+	<script src="./effects/holo-shimmer.js"></script>
+	<script src="./effects/matrix-stream.js"></script>
+	<script src="./effects/card-glow.js"></script>
+	<script src="./effects/halo-rings.js"></script>
+	<script src="./effects/shader-time.js"></script>
+
+	<script>
+		AFRAME.registerComponent('navigate-on-click', {
+			schema: {
+				url: { type: 'string', default: '' }
+			},
+
+			init: function () {
+				var data = this.data;
+
+				this.el.addEventListener('click', function () {
+					if (data.url) {
+						window.open(data.url, '_blank');
+					}
+				});
+			}
+		});
+	</script>
 </head>
 
 <body>
 	<!-- Start of a-scene, A-Frame uses right-hand coordinates -->
 	<!-- For more information: https://aframe.io/docs/1.5.0/guides/building-a-basic-scene.html#transforming-an-entity-in-3d -->
-	<a-scene mindar-image="imageTargetSrc: ./imageTargets/card.mind;" color-space="sRGB"
-		renderer="colorManagement: true, physicallyCorrectLights" vr-mode-ui="enabled: false"
+	<a-scene
+		mindar-image="imageTargetSrc: ./imageTargets/card.mind;"
+		color-space="sRGB"
+		renderer="colorManagement: true, physicallyCorrectLights"
+		vr-mode-ui="enabled: false"
 		device-orientation-permission-ui="enabled: false">
 
 		<!-- Asset management system -->
 		<!-- For more information: https://aframe.io/docs/1.5.0/core/asset-management-system.html -->
 		<a-assets>
-			<img id="card" src="./images/virtualCard.png">
+			<img id="card" src="./images/virtualCard.png" alt="Virtual card">
+			<a-asset-item id="avatarModel" src="./models/MyAvatar.glb"></a-asset-item>
 		</a-assets>
 
 		<!-- Camera settings -->
-		<a-camera position="0 0 0" look-controls="enabled: false" cursor="fuse: false; rayOrigin: mouse;"
-			raycaster="far: ${customFields.libVersion}; objects: .clickable"></a-camera>
+		<a-camera
+			position="0 0 0"
+			look-controls="enabled: false"
+			cursor="fuse: false; rayOrigin: mouse;"
+			raycaster="far: 10000; objects: .clickable">
+		</a-camera>
 
-		<!-- Place your A-Frame Primitives below -->
+		<!-- Place your A-Frame primitives below -->
 		<a-entity mindar-image-target="targetIndex: 0">
-			<a-plane src="#card" position="0 0 0" width="1" height="0.6"  rotation="0 0 0"></a-plane>
+			<a-plane
+				position="0 0 -0.01"
+				width="1.1"
+				height="0.7"
+				rotation="0 0 0"
+				material="shader: card-glow; color: #00e5ff; intensity: 1.15; transparent: true; depthWrite: false; blending: additive;">
+			</a-plane>
+
+			<a-plane
+				src="#card"
+				position="0 0 0"
+				width="1"
+				height="0.6"
+				rotation="0 0 0"
+				material="shader: holo-shimmer; src: #card; shimmerIntensity: 0.5; foilBrightness: 0.2; tiling: 1.0;">
+			</a-plane>
+
+			<a-text
+				value="XX"
+				align="left"
+				position="-0.44 0.08 0.01"
+				width="1.5">
+			</a-text>
+
+			<a-text
+				value="XXX"
+				align="left"
+				position="-0.44 0.02 0.01"
+				width="1">
+			</a-text>
+
+			<a-entity
+				position="0.35 -0.2 0.02"
+				class="clickable"
+				navigate-on-click="url: mailto:yuletan@gmail.com">
+				<a-plane
+					width="0.25"
+					height="0.1"
+					material="color: gray; opacity: 1">
+				</a-plane>
+				<a-text
+					value="Contact Me"
+					align="center"
+					color="#ffffff"
+					position="0 0 0.01"
+					width="1">
+				</a-text>
+			</a-entity>
+
+			<a-entity
+				position="0 -0.33 0.02"
+				class="clickable"
+				navigate-on-click="url: https://www.linkedin.com/company/nigay/">
+				<a-plane
+					width="0.6"
+					height="0.1"
+					material="color: gray; opacity: 0.5">
+				</a-plane>
+				<a-text
+					value="Click here for my portfolio"
+					align="center"
+					color="#ffffff"
+					position="0 0 0.01"
+					width="1">
+				</a-text>
+			</a-entity>
+
+			<a-entity
+				gltf-model="#avatarModel"
+				position="0.35 0.2 0.1"
+				rotation="90 0 0"
+				scale="0.4 0.4 0.4">
+			</a-entity>
 		</a-entity>
 	</a-scene>
 </body>
